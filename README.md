@@ -1,6 +1,8 @@
 # generator-spritesmith [![Build Status](https://secure.travis-ci.org/bezoerb/generator-spritesmith.png?branch=master)](https://travis-ci.org/bezoerb/generator-spritesmith)
 
-> [Yeoman](http://yeoman.io) generator
+> [Yeoman](http://yeoman.io) generator to add grunt-spritesmith + retina support to an existing project
+
+#### THIS PROJECT IS CURRENTLY WIP
 
 
 ## Getting Started

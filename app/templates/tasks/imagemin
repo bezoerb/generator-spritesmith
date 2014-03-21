@@ -1,0 +1,13 @@
+{
+    sprite: {
+        files: [
+            {
+                expand: true,
+                cwd: '<%= imgDir %>/sprites/',
+                src: '*.png',
+                dest: '<%= imgDir %>/sprites/'
+            }
+        ]
+    }
+
+}
