@@ -25,7 +25,9 @@
   "dependencies": {
     "yeoman-generator": "~0.16.0",
     "chalk": "~0.4.0",
-    "gruntfile-api": "0.0.6"
+    "gruntfile-api": "0.0.6",
+    "glob": "^3.2.9",
+    "prettyjson": "^1.0.0"
   },
   "devDependencies": {
     "mocha": "*",

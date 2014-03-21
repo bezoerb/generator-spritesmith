@@ -1,0 +1,55 @@
+// Mixins for sprite generation
+.sprite-width(@sprite) {
+    @sprite-width: ~'@{sprite}-width';
+    width: @@sprite-width;
+}
+
+.sprite-height(@sprite) {
+    @sprite-height: ~'@{sprite}-height';
+    height: @@sprite-height;
+}
+
+.sprite-position(@sprite) {
+    @sprite-offset-x: ~'@{sprite}-offset-x';
+    @sprite-offset-y: ~'@{sprite}-offset-y';
+    background-position: @@sprite-offset-x  @@sprite-offset-y;
+}
+
+// Retina Mixin
+.sprite-image(@sprite,@retina) when (@retina) {
+    @sprite-width: ~'@{sprite}-total-width';
+    @sprite-height: ~'@{sprite}-total-height';
+    @image: ~'@{sprite}-image';
+    @image2x: ~'@{sprite}-image-2x';
+    background-image: url(@@image);
+
+    @media
+    only screen and (-webkit-min-device-pixel-ratio: 2),
+    only screen and (   min--moz-device-pixel-ratio: 2),
+    only screen and (     -o-min-device-pixel-ratio: 2/1),
+    only screen and (        min-device-pixel-ratio: 2),
+    only screen and (                min-resolution: 192dpi),
+    only screen and (                min-resolution: 2dppx) {
+        /* Retina-specific stuff here */
+        background-image: url(@@image2x);
+        background-size: @@sprite-width @@sprite-height;
+    }
+}
+
+// Non-retina mixin
+.sprite-image(@sprite,@retina) when not (@retina) {
+    @image: ~'@{sprite}-image';
+    background-image: url(@@image);
+}
+
+
+.sprite(@sprite) {
+    @retina: ~'@{sprite}-retina';
+    vertical-align: text-top;
+    background-repeat: no-repeat;
+    display: inline-block;
+    .sprite-position(@sprite);
+    .sprite-width(@sprite);
+    .sprite-height(@sprite);
+    .sprite-image(@sprite,@@retina);
+}
