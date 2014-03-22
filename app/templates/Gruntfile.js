@@ -39,12 +39,12 @@ module.exports = function(grunt) {
                 // Location to output spritesheet
                 'destImg': '<%= imgDir %>/sprites/sprite.default.png',
                 <% if (cssFormat === 'less') { %>
-                'destCSS': '<%= cssDir %>/sprite-variables.default.less',<% } else if (cssFormat === 'scss') { %>
-                'destCSS': '<%= cssDir %>/sprite-variables.default.scss',<% } else { %>
-                'destCSS': '<%= cssDir %>/sprite.default.css',
+                'destCSS': '<%= cssDir %>/spritesmith/sprite-variables.default.less',<% } else if (cssFormat === 'scss') { %>
+                'destCSS': '<%= cssDir %>/spritesmith/sprite-variables.default.scss',<% } else { %>
+                'destCSS': '<%= cssDir %>/spritesmith/sprite.default.css',
                 <% } %><% if (cssFormat === 'less') { %>
-                'cssTemplate': '<%= cssDir %>/helper/sprite.less.template.mustache',<% } else if (cssFormat === 'scss') { %>
-                'cssTemplate': '<%= cssDir %>/helper/sprite.scss.template.mustache',<% } %>
+                'cssTemplate': '<%= cssDir %>/spritesmith/helper/sprite.less.template.mustache',<% } else if (cssFormat === 'scss') { %>
+                'cssTemplate': '<%= cssDir %>/spritesmith/helper/sprite.scss.template.mustache',<% } %>
 
                 // OPTIONAL: Manual override for imgPath specified in CSS
                 'imgPath': '/<%= imgDir %>/sprites/sprite.default.png',
@@ -58,7 +58,7 @@ module.exports = function(grunt) {
 
                 }
             },
-            2x: {
+            retina: {
                 'cssFormat': <% if (cssFormat === 'less') { %>'less'<% } else if (cssFormat === 'scss') { %>'scss'<% } else { %>'css'<% } %>,
                 // OPTIONAL: Specify padding between images
                 'padding': 50,
@@ -69,12 +69,12 @@ module.exports = function(grunt) {
                 // Location to output spritesheet
                 'destImg': '<%= imgDir %>/sprites/sprite.retina@2x.png',
                 <% if (cssFormat === 'less') { %>
-                'destCSS': '<%= cssDir %>/sprite-variables.retina.less',<% } else if (cssFormat === 'scss') { %>
-                'destCSS': '<%= cssDir %>/sprite-variables.retina.scss',<% } else { %>
-                'destCSS': '<%= cssDir %>/sprite.retina.css',
+                'destCSS': '<%= cssDir %>/spritesmith/sprite-variables.retina.less',<% } else if (cssFormat === 'scss') { %>
+                'destCSS': '<%= cssDir %>/spritesmith/sprite-variables.retina.scss',<% } else { %>
+                'destCSS': '<%= cssDir %>/spritesmith/sprite.retina.css',
                 <% } %><% if (cssFormat === 'less') { %>
-                'cssTemplate': '<%= cssDir %>/helper/retina-sprite.less.template.mustache',<% } else if (cssFormat === 'scss') { %>
-                'cssTemplate': '<%= cssDir %>/helper/retina-sprite.scss.template.mustache',<% } %>
+                'cssTemplate': '<%= cssDir %>/spritesmith/helper/retina-sprite.less.template.mustache',<% } else if (cssFormat === 'scss') { %>
+                'cssTemplate': '<%= cssDir %>/spritesmith/helper/retina-sprite.scss.template.mustache',<% } %>
 
                 'imgPath': '<%= imgDir %>/sprites/sprite.retina@2x.png',
 

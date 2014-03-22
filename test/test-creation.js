@@ -25,7 +25,9 @@ describe('spritesmith generator', function () {
     ];
 
     helpers.mockPrompt(this.app, {
-      'someOption': true
+      'cssFormat': 'less',
+      'cssDir': 'styles',
+      'imgDir': 'images'
     });
     this.app.options['skip-install'] = true;
     this.app.run({}, function () {

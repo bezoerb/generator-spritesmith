@@ -5,6 +5,6 @@
       "grunt": "~0.4.2",
       "grunt-spritesmith": "~1.22.0",
       "grunt-image-resize": "~0.3.0",
-      "grunt-contrib-imagemin": "~0.4.2"
+      "grunt-contrib-imagemin": "~0.4.1"
   }
 }
