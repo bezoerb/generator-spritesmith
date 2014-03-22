@@ -9,6 +9,7 @@ var log = require('loglevel');
 var gruntapi = require('gruntfile-api');
 var glob = require('glob');
 var prettyjson = require('prettyjson');
+var editorconfig = require('editorconfig');
 
 
 var prompts = [
@@ -62,8 +63,11 @@ var SpritesmithGenerator = yeoman.generators.Base.extend({
                 return path.join(dir,file);
             });
         }).flatten().reduce(function(dest, file) {
+
+
             var dirname = path.dirname(file);
-            if (!dest || dirname.split(path.sep) < dest.split(path.sep)) {
+            if (!dest || dirname.split(path.sep).length < dest.split(path.sep).length) {
+                console.log(dirname, ' -> ', dest);
                 dest = dirname;
             }
             return dest;
@@ -77,12 +81,12 @@ var SpritesmithGenerator = yeoman.generators.Base.extend({
         prompts.push({
             type: 'input',
             name: 'cssDir',
-            message: 'Please enter the path of your stylesheets'
+            message: 'Please enter the base path of your stylesheets'
         });
         prompts.push({
             type: 'input',
             name: 'imgDir',
-            message: 'Please enter the path of your images'
+            message: 'Please enter the base path of your images'
         });
     },
 
@@ -120,6 +124,14 @@ var SpritesmithGenerator = yeoman.generators.Base.extend({
         this.gruntfile.loadNpmTasks('grunt-spritesmith');
         this.gruntfile.loadNpmTasks('grunt-image-resize');
         this.gruntfile.loadNpmTasks('grunt-contrib-imagemin');
+
+        // add required global
+        try {
+            this.gruntfile.addGlobalDeclarationRaw('path','require(\'path\')');
+        } catch (err) {
+
+        }
+
     },
 
     /**
@@ -163,23 +175,33 @@ module.exports = SpritesmithGenerator.extend({
         this.pkg = yeoman.file.readJSON(path.join(__dirname, '../package.json'));
 
         // gruntfile already available
-        if (fs.statSync(path.join(this.env.cwd, 'Gruntfile.js')).isFile()) {
+        var gruntfilePath = path.join(this.env.cwd, 'Gruntfile.js');
+        if (fs.existsSync(gruntfilePath)) {
             this.updateEnv = true;
-            this.gruntfile = gruntapi.init(fs.readFileSync(path.join(this.env.cwd, 'Gruntfile.js'), 'utf-8').toString());
+            this.gruntfile = gruntapi.init(fs.readFileSync(gruntfilePath, 'utf-8').toString());
             this.extendPrompts();
             this.initDefaults();
+
+            var conf = editorconfig.parse(gruntfilePath);
+
+            // add esformatter indent option based on .editorconfig
+            this.formatoptions = {
+                'indent' : {
+                    'value': _.times(conf.indent_size, function() { return (conf.indent_style === 'space') ? ' ' : '\t';}).join('')
+                }
+            };
+
         } else {
             this.updateEnv = false;
             this.imgDir = 'images';
             this.cssDir = 'styles';
         }
 
-        // add packages to package.json
-        this.mergePackageJson();
+
 
         this.on('end', function() {
             if (!this.options['skip-install']) {
-              //  this.npmInstall();
+                this.npmInstall();
             }
         });
     },
@@ -192,7 +214,8 @@ module.exports = SpritesmithGenerator.extend({
         console.log(this.yeoman);
 
         // replace it with a short and sweet description of your generator
-        console.log(chalk.magenta('Add grunt-spritesmith + retina support to an existing project.'));
+        console.log(chalk.magenta('Add grunt-spritesmith + retina support to your project.'));
+        console.log(chalk.magenta('Existing Gruntfile and package.json files will be backuped and modified.'));
 
         this.prompt(prompts, function(props) {
             _.assign(this, props);
@@ -203,22 +226,36 @@ module.exports = SpritesmithGenerator.extend({
 
     app: function() {
 
+        // add package json
+        if (fs.existsSync(path.join(this.env.cwd, 'package.json'))) {
+            var pkg = this.mergePackageJson();
+
+            // backup existing one
+            if (!fs.existsSync(path.join(this.env.cwd, 'package.json.backup')) && fs.existsSync(path.join(this.env.cwd, 'package.json'))) {
+                fs.renameSync(path.join(this.env.cwd, 'package.json'), path.join(this.env.cwd, 'package.json.backup'));
+            }
+
+            fs.writeFileSync(path.join(this.env.cwd, 'package.json'), pkg);
+        } else {
+            this.copy('_package.json', 'package.json');
+        }
+
         // init fresh installation
         if (!this.updateEnv) {
-            this.copy('_package.json', 'package.json');
             this.template('Gruntfile.js');
 
             // update existing files
         } else {
-
-            // add tasks
-            this.loadNpmTasks();
-            this.addTasks();
+            // backup old gruntfile
+            if (!fs.existsSync(path.join(this.env.cwd, 'Gruntfile.js.backup')) && fs.existsSync(path.join(this.env.cwd, 'Gruntfile.js'))) {
+                fs.renameSync(path.join(this.env.cwd, 'Gruntfile.js'), path.join(this.env.cwd, 'Gruntfile.js.backup'));
+            }
 
             // use fs.writeFileSync to skip overwrite message
             // this is not needed because of merge
-            fs.writeFileSync(path.join(this.env.cwd, 'package.json'), this.mergePackageJson());
-            fs.writeFileSync(path.join(this.env.cwd, 'Gruntfile.js'), this.gruntfile.toString());
+            this.loadNpmTasks();
+            this.addTasks();
+            fs.writeFileSync(path.join(this.env.cwd, 'Gruntfile.js'), this.gruntfile.toString(this.formatoptions));
         }
     },
 
@@ -226,8 +263,8 @@ module.exports = SpritesmithGenerator.extend({
         var helperPath = path.join(this.cssDir, 'spritesmith');
         this.mkdir(helperPath);
 
-        this.copy('helper/sprite.' + this.cssFormat + '.template.mustache', path.join(helperPath, 'sprite.' + this.cssFormat + '.template.mustache'));
-        this.copy('helper/retina-sprite.' + this.cssFormat + '.template.mustache', path.join(helperPath, 'retina-sprite.' + this.cssFormat + '.template.mustache'));
+        this.copy('helper/sprite.' + this.cssFormat + '.template.mustache', path.join(helperPath,'helper', 'sprite.' + this.cssFormat + '.template.mustache'));
+        this.copy('helper/retina-sprite.' + this.cssFormat + '.template.mustache', path.join(helperPath, 'helper','retina-sprite.' + this.cssFormat + '.template.mustache'));
 
         if (this.cssFormat === 'less' || this.cssFormat === 'scss') {
             this.copy('helper/mixins.' + this.cssFormat, path.join(helperPath, 'mixins-spritesmith.' + this.cssFormat));
@@ -235,7 +272,22 @@ module.exports = SpritesmithGenerator.extend({
     },
 
     projectfiles: function() {
-        this.copy('editorconfig', '.editorconfig');
-        this.copy('jshintrc', '.jshintrc');
+        if (!fs.existsSync(path.join(this.env.cwd, '.editorconfig'))) {
+            this.copy('editorconfig', '.editorconfig');
+        }
+        if (!fs.existsSync(path.join(this.env.cwd, '.jshintrc'))) {
+            this.copy('jshintrc', '.jshintrc');
+        }
+    },
+
+    dummyImages: function() {
+        this.copy('img/bower.png', path.join(this.imgDir, 'spritefiles', 'default', 'bower.png'));
+        this.copy('img/bower.png', path.join(this.imgDir, 'spritefiles', '2x', 'bower.png'));
+
+        this.copy('img/grunt.png', path.join(this.imgDir, 'spritefiles', 'default', 'grunt.png'));
+        this.copy('img/grunt.png', path.join(this.imgDir, 'spritefiles', '2x', 'grunt.png'));
+
+        this.copy('img/yeoman.png', path.join(this.imgDir, 'spritefiles', 'default', 'yeoman.png'));
+        this.copy('img/yeoman.png', path.join(this.imgDir, 'spritefiles', '2x', 'yeoman.png'));
     }
 });

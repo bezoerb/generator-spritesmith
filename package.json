@@ -27,11 +27,12 @@
     "chalk": "~0.4.0",
     "gruntfile-api": "0.0.6",
     "glob": "^3.2.9",
-    "prettyjson": "^1.0.0"
+    "prettyjson": "^1.0.0",
+    "editorconfig": "^0.11.4"
   },
   "devDependencies": {
     "mocha": "*",
-    "gruntfile-api": "0.0.6",
+    "gruntfile-api": "0.0.7",
     "lodash": "^2.4.1",
     "loglevel": "^0.6.0"
   },
