@@ -157,10 +157,11 @@ var SpritesmithGenerator = yeoman.generators.Base.extend({
      */
     mergePackageJson: function mergePackageJson() {
         var orig = yeoman.file.readJSON(path.join(this.env.cwd, 'package.json')),
-            pkg = this.read(path.join(this.sourceRoot(), '_package.json'), 'utf8');
+            pkg = this.read(path.join(this.sourceRoot(), '_package.json'), 'utf8'),
+            conf = editorconfig.parse(path.join(this.env.cwd, 'package.json'));
 
         pkg = _.merge(JSON.parse(this.engine(pkg, this)), orig);
-        return JSON.stringify(pkg);
+        return JSON.stringify(pkg,null,conf.indent_size);
     }
 
 
