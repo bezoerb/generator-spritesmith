@@ -35,7 +35,8 @@
         'destCSS': '<%= cssDir %>/spritesmith/sprite.default.css',
         <% } %><% if (cssFormat === 'less') { %>
         'cssTemplate': '<%= cssDir %>/spritesmith/helper/sprite.less.template.mustache',<% } else if (cssFormat === 'scss') { %>
-        'cssTemplate': '<%= cssDir %>/spritesmith/helper/sprite.scss.template.mustache',<% } %>
+        'cssTemplate': '<%= cssDir %>/spritesmith/helper/sprite.scss.template.mustache',<% } else { %>
+        'cssTemplate': '<%= cssDir %>/spritesmith/helper/sprite.css.template.mustache',<% } %>
 
         // OPTIONAL: Manual override for imgPath specified in CSS
         'imgPath': '/<%= imgDir %>/sprites/sprite.default.png',
@@ -65,7 +66,8 @@
         'destCSS': '<%= cssDir %>/spritesmith/sprite.retina.css',
         <% } %><% if (cssFormat === 'less') { %>
         'cssTemplate': '<%= cssDir %>/spritesmith/helper/retina-sprite.less.template.mustache',<% } else if (cssFormat === 'scss') { %>
-        'cssTemplate': '<%= cssDir %>/spritesmith/helper/retina-sprite.scss.template.mustache',<% } %>
+        'cssTemplate': '<%= cssDir %>/spritesmith/helper/retina-sprite.scss.template.mustache',<% } else { %>
+        'cssTemplate': '<%= cssDir %>/spritesmith/helper/retina-sprite.css.template.mustache',<% } %>
 
         'imgPath': '<%= imgDir %>/sprites/sprite.retina@2x.png',
 
