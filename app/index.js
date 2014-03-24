@@ -158,7 +158,7 @@ var SpritesmithGenerator = yeoman.generators.Base.extend({
     mergePackageJson: function mergePackageJson() {
         var orig = yeoman.file.readJSON(path.join(this.env.cwd, 'package.json')),
             pkg = this.read(path.join(this.sourceRoot(), '_package.json'), 'utf8'),
-            conf = editorconfig.parse(path.join(this.env.cwd, 'package.json'));
+            conf = editorconfig.parse(path.join(this.env.cwd, 'package.json')) || {indent_size: 4};
 
         pkg = _.merge(JSON.parse(this.engine(pkg, this)), orig);
         return JSON.stringify(pkg,null,conf.indent_size);
@@ -183,7 +183,7 @@ module.exports = SpritesmithGenerator.extend({
             this.extendPrompts();
             this.initDefaults();
 
-            var conf = editorconfig.parse(gruntfilePath);
+            var conf = editorconfig.parse(gruntfilePath) || {indent_size: 4, indent_style: 'space'};
 
             // add esformatter indent option based on .editorconfig
             this.formatoptions = {
