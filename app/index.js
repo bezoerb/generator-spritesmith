@@ -67,7 +67,6 @@ var SpritesmithGenerator = yeoman.generators.Base.extend({
 
             var dirname = path.dirname(file);
             if (!dest || dirname.split(path.sep).length < dest.split(path.sep).length) {
-                console.log(dirname, ' -> ', dest);
                 dest = dirname;
             }
             return dest;
