@@ -37,6 +37,11 @@ Finally, initiate the generator:
 $ yo spritesmith
 ```
 
+### What do you get?
+
+After running `yo spritesmith` all required npm modules are installed and the task configurations will be added to your existing Gruntfile. This is done via AST manipulation so it does not break your existing configuration. 
+When there is no Gruntfile inside your project this generator will add a new one.
+
 ### Getting To Know Yeoman
 
 Yeoman has a heart of gold. He's a person with feelings and opinions, but he's very easy to work with. If you think he's too opinionated, he can be easily convinced.
