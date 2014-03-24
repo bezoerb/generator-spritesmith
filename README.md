@@ -2,9 +2,6 @@
 
 > [Yeoman](http://yeoman.io) generator to add grunt-spritesmith + retina support to an existing project
 
-#### THIS PROJECT IS CURRENTLY WIP
-
-
 ## Getting Started
 
 ### What is Yeoman?
