@@ -32,7 +32,8 @@ describe('spritesmith generator', function() {
         helpers.mockPrompt(this.app, {
             'cssFormat': 'less',
             'cssDir': 'styles',
-            'imgDir': 'images'
+            'imgDir': 'images',
+            'cssImgDir': 'images'
         });
         this.app.options['skip-install'] = true;
         this.app.run({}, function() {
@@ -56,7 +57,8 @@ describe('spritesmith generator', function() {
         helpers.mockPrompt(this.app, {
             'cssFormat': 'scss',
             'cssDir': 'styles',
-            'imgDir': 'images'
+            'imgDir': 'images',
+            'cssImgDir': 'images'
         });
         this.app.options['skip-install'] = true;
         this.app.run({}, function() {
@@ -80,7 +82,8 @@ describe('spritesmith generator', function() {
         helpers.mockPrompt(this.app, {
             'cssFormat': 'css',
             'cssDir': 'styles',
-            'imgDir': 'images'
+            'imgDir': 'images',
+            'cssImgDir': 'images'
         });
         this.app.options['skip-install'] = true;
         this.app.run({}, function() {
