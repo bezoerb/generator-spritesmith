@@ -32,6 +32,24 @@ var prompts = [
                 value: 'scss'
             }
         ]
+    },
+    {
+        type: 'input',
+        name: 'cssDir',
+        message: 'Please enter the base path of your stylesheets',
+        default: 'styles'
+    },
+    {
+        type: 'input',
+        name: 'imgDir',
+        message: 'Please enter the base path of your images',
+        default: 'images'
+    },
+    {
+        type: 'input',
+        name: 'cssImgDir',
+        message: 'Please enter the base path of your images specified in CSS',
+        default: '../images'
     }
 ];
 
@@ -57,36 +75,18 @@ var SpritesmithGenerator = yeoman.generators.Base.extend({
     detectDirectory: function detectDirectory(pattern) {
         var cwd = this.env.cwd;
         return  _(fs.readdirSync(cwd)).filter(function(dir) {
-            return !/(node_modules)|(bower_components)/.test(dir);
+            return !/(\.tmp)|(node_modules)|(bower_components)/.test(dir);
         }).map(function(dir) {
-            return _.map(glob.sync(pattern, {cwd: path.join(cwd, dir)}),function(file){
-                return path.join(dir,file);
+            return _.map(glob.sync(pattern, {cwd: path.join(cwd, dir)}), function(file) {
+                return path.join(dir, file);
             });
         }).flatten().reduce(function(dest, file) {
-
-
             var dirname = path.dirname(file);
             if (!dest || dirname.split(path.sep).length < dest.split(path.sep).length) {
                 dest = dirname;
             }
             return dest;
-        },'');
-    },
-
-    /**
-     * Add more prompt questions for images and stylesheets
-     */
-    extendPrompts: function extendPrompts() {
-        prompts.push({
-            type: 'input',
-            name: 'cssDir',
-            message: 'Please enter the base path of your stylesheets'
-        });
-        prompts.push({
-            type: 'input',
-            name: 'imgDir',
-            message: 'Please enter the base path of your images'
-        });
+        }, '');
     },
 
     /**
@@ -94,7 +94,7 @@ var SpritesmithGenerator = yeoman.generators.Base.extend({
      */
     initDefaults: function initDefaults() {
         var cssFormatDefault = 'css',
-            tasks = JSON.parse(this.gruntfile.getJsonTasks());
+            tasks = this.gruntfile ? JSON.parse(this.gruntfile.getJsonTasks()) : {};
 
         switch (true) {
             case _.has(tasks, 'sass'):
@@ -108,9 +108,22 @@ var SpritesmithGenerator = yeoman.generators.Base.extend({
                 break;
         }
 
+
         this.setDefault('cssFormat', cssFormatDefault);
-        this.setDefault('cssDir', this.detectDirectory('**/*.{css,scss,less}') || 'styles');
+        this.setDefault('cssDir', this.detectDirectory('**/*.{scss,css,less}') || 'styles');
         this.setDefault('imgDir', this.detectDirectory('**/*.{png,jpg,gif}') || 'images');
+        this.setDefault('cssImgDir', function(answers) {
+            var result = '../' + answers.imgDir || '';
+
+            // try to strip common paths from img and css path
+            for (var i in answers.cssDir) {
+                if (answers.imgDir.length > i && answers.cssDir[i] !== answers.imgDir[i]) {
+                    return '../' + answers.imgDir.substr(i);
+                }
+            }
+
+            return result;
+        });
     },
 
 
@@ -126,7 +139,7 @@ var SpritesmithGenerator = yeoman.generators.Base.extend({
 
         // add required global
         try {
-            this.gruntfile.addGlobalDeclarationRaw('path','require(\'path\')');
+            this.gruntfile.addGlobalDeclarationRaw('path', 'require(\'path\')');
         } catch (err) {
 
         }
@@ -160,7 +173,7 @@ var SpritesmithGenerator = yeoman.generators.Base.extend({
             conf = editorconfig.parse(path.join(this.env.cwd, 'package.json')) || {indent_size: 4};
 
         pkg = _.merge(JSON.parse(this.engine(pkg, this)), orig);
-        return JSON.stringify(pkg,null,conf.indent_size);
+        return JSON.stringify(pkg, null, conf.indent_size);
     }
 
 
@@ -176,27 +189,26 @@ module.exports = SpritesmithGenerator.extend({
 
         // gruntfile already available
         var gruntfilePath = path.join(this.env.cwd, 'Gruntfile.js');
+        var conf = editorconfig.parse(gruntfilePath) || {indent_size: 4, indent_style: 'space'};
+
+        // add esformatter indent option based on .editorconfig
+        this.formatoptions = {
+            'indent': {
+                'value': _.times(conf.indent_size,function() {
+                    return (conf.indent_style === 'space') ? ' ' : '\t';
+                }).join('')
+            }
+        };
+
+
         if (fs.existsSync(gruntfilePath)) {
             this.updateEnv = true;
             this.gruntfile = gruntapi.init(fs.readFileSync(gruntfilePath, 'utf-8').toString());
-            this.extendPrompts();
-            this.initDefaults();
-
-            var conf = editorconfig.parse(gruntfilePath) || {indent_size: 4, indent_style: 'space'};
-
-            // add esformatter indent option based on .editorconfig
-            this.formatoptions = {
-                'indent' : {
-                    'value': _.times(conf.indent_size, function() { return (conf.indent_style === 'space') ? ' ' : '\t';}).join('')
-                }
-            };
-
         } else {
             this.updateEnv = false;
-            this.imgDir = 'images';
-            this.cssDir = 'styles';
         }
 
+        this.initDefaults();
 
 
         this.on('end', function() {
@@ -219,7 +231,6 @@ module.exports = SpritesmithGenerator.extend({
 
         this.prompt(prompts, function(props) {
             _.assign(this, props);
-
             done();
         }.bind(this));
     },
@@ -263,8 +274,8 @@ module.exports = SpritesmithGenerator.extend({
         var helperPath = path.join(this.cssDir, 'spritesmith');
         this.mkdir(helperPath);
 
-        this.copy('helper/sprite.' + this.cssFormat + '.template.mustache', path.join(helperPath,'helper', 'sprite.' + this.cssFormat + '.template.mustache'));
-        this.copy('helper/retina-sprite.' + this.cssFormat + '.template.mustache', path.join(helperPath, 'helper','retina-sprite.' + this.cssFormat + '.template.mustache'));
+        this.copy('helper/sprite.' + this.cssFormat + '.template.mustache', path.join(helperPath, 'helper', 'sprite.' + this.cssFormat + '.template.mustache'));
+        this.copy('helper/retina-sprite.' + this.cssFormat + '.template.mustache', path.join(helperPath, 'helper', 'retina-sprite.' + this.cssFormat + '.template.mustache'));
 
         if (this.cssFormat === 'less' || this.cssFormat === 'scss') {
             this.copy('helper/mixins.' + this.cssFormat, path.join(helperPath, 'mixins-spritesmith.' + this.cssFormat));

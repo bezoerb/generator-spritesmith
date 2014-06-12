@@ -48,7 +48,7 @@ module.exports = function(grunt) {
                 'cssTemplate': '<%= cssDir %>/spritesmith/helper/sprite.css.template.mustache',<% } %>
 
                 // OPTIONAL: Manual override for imgPath specified in CSS
-                'imgPath': '/<%= imgDir %>/sprites/sprite.default.png',
+                'imgPath': '<%= cssImgDir %>/sprites/sprite.default.png',
 
                 // OPTIONAL: Map variable of each sprite
                 'cssVarMap': function(sprite) {
@@ -78,7 +78,7 @@ module.exports = function(grunt) {
                 'cssTemplate': '<%= cssDir %>/spritesmith/helper/retina-sprite.scss.template.mustache',<% } else { %>
                 'cssTemplate': '<%= cssDir %>/spritesmith/helper/retina-sprite.css.template.mustache',<% } %>
 
-                'imgPath': '<%= imgDir %>/sprites/sprite.retina@2x.png',
+                'imgPath': '<%= cssImgDir %>/sprites/sprite.retina@2x.png',
 
                 // OPTIONAL: Map variable of each sprite
                 'cssVarMap': function(sprite) {
