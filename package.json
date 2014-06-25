@@ -20,7 +20,7 @@
     "app"
   ],
   "keywords": [
-    "yeoman-generator"
+    "yeoman-generator","sprite"
   ],
   "dependencies": {
     "chalk": "~0.4.0",

@@ -1,5 +1,5 @@
 # generator-spritesmith [![Build Status](https://secure.travis-ci.org/bezoerb/generator-spritesmith.png?branch=master)](https://travis-ci.org/bezoerb/generator-spritesmith)
-
+> Want to create sprites on the fly? Try this
 > [Yeoman](http://yeoman.io) generator to add grunt-spritesmith + retina support to an existing project
 
 ## Getting Started
@@ -36,7 +36,7 @@ $ yo spritesmith
 
 ### What do you get?
 
-After running `yo spritesmith` all required npm modules are installed and the task configurations will be added to your existing Gruntfile. This is done via AST manipulation so it does not break your existing configuration. 
+After running `yo spritesmith` all required npm modules are installed and the task configurations will be added to your existing Gruntfile. This is done via AST manipulation so it does not break your existing configuration.
 When there is no Gruntfile inside your project this generator will add a new one.
 
 ## License
