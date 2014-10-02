@@ -182,7 +182,6 @@ var SpritesmithGenerator = yeoman.generators.Base.extend({
 
 module.exports = SpritesmithGenerator.extend({
     init: function() {
-        log.setLevel(0);
 
         this.pkg = yeoman.file.readJSON(path.join(__dirname, '../package.json'));
 
