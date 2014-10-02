@@ -5,7 +5,6 @@ var yeoman = require('yeoman-generator');
 var chalk = require('chalk');
 var fs = require('fs');
 var _ = require('lodash');
-var log = require('loglevel');
 var gruntapi = require('gruntfile-api');
 var glob = require('glob');
 var prettyjson = require('prettyjson');
