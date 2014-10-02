@@ -1,6 +1,6 @@
 {
   "name": "generator-spritesmith",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Yeoman generator",
   "license": "MIT",
   "main": "app/index.js",
@@ -20,7 +20,8 @@
     "app"
   ],
   "keywords": [
-    "yeoman-generator","sprite"
+    "yeoman-generator",
+    "sprite"
   ],
   "dependencies": {
     "chalk": "~0.4.0",
