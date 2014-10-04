@@ -33,7 +33,8 @@ describe('spritesmith generator', function() {
             'cssFormat': 'less',
             'cssDir': 'styles',
             'imgDir': 'images',
-            'cssImgDir': 'images'
+            'cssImgDir': 'images',
+            'retina': true
         });
         this.app.options['skip-install'] = true;
         this.app.run({}, function() {
@@ -58,7 +59,8 @@ describe('spritesmith generator', function() {
             'cssFormat': 'scss',
             'cssDir': 'styles',
             'imgDir': 'images',
-            'cssImgDir': 'images'
+            'cssImgDir': 'images',
+            'retina': true
         });
         this.app.options['skip-install'] = true;
         this.app.run({}, function() {
@@ -83,7 +85,8 @@ describe('spritesmith generator', function() {
             'cssFormat': 'css',
             'cssDir': 'styles',
             'imgDir': 'images',
-            'cssImgDir': 'images'
+            'cssImgDir': 'images',
+            'retina': true
         });
         this.app.options['skip-install'] = true;
         this.app.run({}, function() {
