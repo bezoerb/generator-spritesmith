@@ -7,8 +7,8 @@ module.exports = function(grunt) {
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
 
-        sprite: {
-            options: {
+        sprite: {<% if (!retina) {%>
+            default: {
                 // OPTIONAL: Specify algorithm (top-down, left-right, diagonal [\ format],
                 // alt-diagonal [/ format], binary-tree [best packing])
                 // Visual representations can be found below
@@ -26,10 +26,7 @@ module.exports = function(grunt) {
 
                     // Quality of image (gm only)
                     'quality': 90
-                }
-            },
-
-            default: {
+                },
                 'cssFormat': <% if (cssFormat === 'less') { %>'less'<% } else if (cssFormat === 'scss') { %>'scss'<% } else { %>'css'<% } %>,
                 // OPTIONAL: Specify padding between images
                 'padding': 50,
@@ -58,8 +55,26 @@ module.exports = function(grunt) {
                     sprite.name = 'default-' + sprite.name.replace(/\s/, '_');
 
                 }
-            },
+            }<% } else { %>
             retina: {
+                // OPTIONAL: Specify algorithm (top-down, left-right, diagonal [\ format],
+                // alt-diagonal [/ format], binary-tree [best packing])
+                // Visual representations can be found below
+                'algorithm': 'top-down',
+
+                // skip function declraration
+                cssOpts: {
+                    'functions': false
+                },
+
+                // OPTIONAL: Specify img options
+                'imgOpts': {
+                    // Format of the image (inferred from destImg' extension by default) (jpg, png)
+                    'format': 'png',
+
+                    // Quality of image (gm only)
+                    'quality': 90
+                },
                 'cssFormat': <% if (cssFormat === 'less') { %>'less'<% } else if (cssFormat === 'scss') { %>'scss'<% } else { %>'css'<% } %>,
                 // OPTIONAL: Specify padding between images
                 'padding': 50,
@@ -98,7 +113,7 @@ module.exports = function(grunt) {
                     sprite.image = sprite.image.replace(/@2x/, '');
 
                 }
-            }
+            }<% } %>
         },
         image_resize: {
             sprite: {
