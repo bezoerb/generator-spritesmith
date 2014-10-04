@@ -49,6 +49,12 @@ var prompts = [
         name: 'cssImgDir',
         message: 'Please enter the base path of your images specified in CSS',
         default: '../images'
+    },
+    {
+        type: 'confirm',
+        name: 'retina',
+        message: 'Do you want to create retina sprites',
+        default: true
     }
 ];
 
@@ -81,7 +87,7 @@ var SpritesmithGenerator = yeoman.generators.Base.extend({
             });
         }).flatten().reduce(function(dest, file) {
             var dirname = path.dirname(file);
-            if (!dest || dirname.split(path.sep).length < dest.split(path.sep).length) {
+            if ((!dest || dirname.split(path.sep).length < dest.split(path.sep).length) && !/(\.tmp)|(node_modules)|(bower_components)/.test(dirname)) {
                 dest = dirname;
             }
             return dest;
@@ -149,16 +155,22 @@ var SpritesmithGenerator = yeoman.generators.Base.extend({
      * Add task Configs
      * @returns {*}
      */
-    addTasks: function addTasks() {
+    addTasks: function addTasks(retina) {
         var self = this;
         var tasks = fs.readdirSync(path.join(this.sourceRoot(), 'tasks/'));
         tasks.forEach(function(task) {
-            var taskbody = self.read('tasks/' + task, 'utf8');
-            taskbody = self.engine(taskbody, self);
-            self.gruntfile.insertRawConfig(task, taskbody);
+            if (retina || task !== 'image_resize') {
+                var taskbody = self.read('tasks/' + task, 'utf8');
+                taskbody = self.engine(taskbody, self);
+                self.gruntfile.insertRawConfig(task, taskbody);
+            }
         });
 
-        this.gruntfile.registerTask('spritesmith', ['sprite', 'image_resize']);
+        if (retina) {
+            this.gruntfile.registerTask('spritesmith', ['sprite', 'image_resize']);
+        } else {
+            this.gruntfile.registerTask('spritesmith', ['sprite']);
+        }
     },
 
     /**
@@ -263,7 +275,7 @@ module.exports = SpritesmithGenerator.extend({
             // use fs.writeFileSync to skip overwrite message
             // this is not needed because of merge
             this.loadNpmTasks();
-            this.addTasks();
+            this.addTasks(this.retina);
             fs.writeFileSync(path.join(this.env.cwd, 'Gruntfile.js'), this.gruntfile.toString(this.formatoptions));
         }
     },
@@ -290,13 +302,17 @@ module.exports = SpritesmithGenerator.extend({
     },
 
     dummyImages: function() {
-        this.copy('img/bower.png', path.join(this.imgDir, 'spritefiles', 'default', 'bower.png'));
-        this.copy('img/bower.png', path.join(this.imgDir, 'spritefiles', '2x', 'bower.png'));
+        if (!this.retina) {
+            this.copy('img/bower.png', path.join(this.imgDir, 'spritefiles', 'default', 'bower.png'));
+            this.copy('img/grunt.png', path.join(this.imgDir, 'spritefiles', 'default', 'grunt.png'));
+            this.copy('img/yeoman.png', path.join(this.imgDir, 'spritefiles', 'default', 'yeoman.png'));
+        } else {
+            this.copy('img/bower.png', path.join(this.imgDir, 'spritefiles', '2x', 'bower.png'));
+            this.copy('img/grunt.png', path.join(this.imgDir, 'spritefiles', '2x', 'grunt.png'));
+            this.copy('img/yeoman.png', path.join(this.imgDir, 'spritefiles', '2x', 'yeoman.png'));
+        }
 
-        this.copy('img/grunt.png', path.join(this.imgDir, 'spritefiles', 'default', 'grunt.png'));
-        this.copy('img/grunt.png', path.join(this.imgDir, 'spritefiles', '2x', 'grunt.png'));
 
-        this.copy('img/yeoman.png', path.join(this.imgDir, 'spritefiles', 'default', 'yeoman.png'));
-        this.copy('img/yeoman.png', path.join(this.imgDir, 'spritefiles', '2x', 'yeoman.png'));
+
     }
 });
