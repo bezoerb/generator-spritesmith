@@ -24,7 +24,7 @@
     "sprite"
   ],
   "dependencies": {
-    "chalk": "~0.4.0",
+    "chalk": "~1.0.0",
     "editorconfig": "^0.11.4",
     "glob": "^3.2.9",
     "gruntfile-api": "0.0.9",
